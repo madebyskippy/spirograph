@@ -5,7 +5,7 @@
  -press UP to turn on circle visualization
  -press DOWN to turn it off
  
- -Q/A, W/S, E/D R/F control the radius of the circles
+ -Q/A, W/S, E/D, R/F control the radius of the circles
  
  -press RIGHT to preview the curve
  -press LEFT to get rid of the preview
@@ -26,7 +26,7 @@ boolean drawBack = true;
 boolean drawPreview = false;
 
 void setup(){
-  size(500,500);
+  size(900,680);
   background(255);
   stroke(0);
   noFill();
@@ -94,8 +94,8 @@ void draw(){
 tuple circ(float deg, int rad, tuple center){
   float x;
   float y;
-  x = center.x + rad * cos(deg);
-  y = center.y + rad * sin(deg);
+  x = center.x + rad * cos(deg+PI/2);
+  y = center.y + rad * sin(deg+PI/2);
   return new tuple(x,y);
 }
 
