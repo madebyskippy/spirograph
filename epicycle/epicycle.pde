@@ -30,13 +30,13 @@ void setup(){
   background(255);
   stroke(0);
   noFill();
-  radius = new int[4];
+  radius = new int[3];
   radius[0] = 100;
   radius[1] = 75;
   radius[2] = 50;
-  radius[3] = 25;
+  //radius[3] = 25;
   
-  centers = new tuple[4];
+  centers = new tuple[3];
   for (int i=0; i<centers.length; i++){
     centers[i] = new tuple(width/2,height/2);
   }
@@ -63,13 +63,13 @@ void draw(){
     }
   }
   
-  tuple last = circ(d*4,radius[3],centers[3]);
+  tuple last = circ(d*radius.length,radius[radius.length-1],centers[centers.length-1]);
   if (drawBack){
     //first circle
     ellipse(centers[0].x,centers[0].y,radius[0]*2,radius[0]*2);
     
     //and last line
-    line (centers[3].x,centers[3].y, last.x, last.y);
+    line (centers[centers.length-1].x,centers[centers.length-1].y, last.x, last.y);
   }
   
   if (points.size()>totalPoints){
@@ -121,9 +121,6 @@ void keyPressed() {
     if (key == 'd'){
       radius[2]-=5;
     }
-    if (key == 'f'){
-      radius[3]-=5;
-    }
     if (key == 'q'){
       radius[0]+=5;
     }
@@ -132,9 +129,6 @@ void keyPressed() {
     }
     if (key == 'e'){
       radius[2]+=5;
-    }
-    if (key == 'r'){
-      radius[3]+=5;
     }
     clearList();
   }
@@ -152,7 +146,7 @@ void preCompute(){
   for (int i=0; i<size; i++){
     preview.remove(0);
   }
-  tuple[] c = new tuple[4];
+  tuple[] c = new tuple[centers.length];
   c[0] = centers[0];
   float d = 0;
   float count = 0;
@@ -166,7 +160,7 @@ void preCompute(){
       c[j] = c0;
     }
   
-    point = circ(d*4,radius[3],c[3]);
+    point = circ(d*radius.length,radius[radius.length-1],c[c.length-1]);
     preview.add(point);
     count ++;
   }
