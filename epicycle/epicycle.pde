@@ -5,20 +5,28 @@
  -press UP to turn on circle visualization
  -press DOWN to turn it off
  
- -Q/A, W/S, E/D, R/F control the radius of the circles
+ -Q/A, W/S, E/D control the radius of the circles
+ -speed control not in yet
  
  -press RIGHT to preview the curve
  -press LEFT to get rid of the preview
 
+  you can manually adjust initial radius and speed in code.
+  search 'MODIFY' and it's those arrays
+  lines 42 and 44
+
 */
+int num = 3;
 
 int[] radius;
 tuple[] centers;
+float[] speeds;
+
 ArrayList<tuple> points;
 ArrayList<tuple> preview;
 
 float rate = 0.01;
-int totalPoints = 360*2;
+int totalPoints = 360*30;
 
 int counter;
 
@@ -30,13 +38,12 @@ void setup(){
   background(255);
   stroke(0);
   noFill();
-  radius = new int[3];
-  radius[0] = 100;
-  radius[1] = 75;
-  radius[2] = 50;
-  //radius[3] = 25;
   
-  centers = new tuple[3];
+  radius = new int[]{100,50,25}; //MODIFY
+  
+  speeds = new float[]{1,-2.1,-2.1}; //MODIFY
+  
+  centers = new tuple[num];
   for (int i=0; i<centers.length; i++){
     centers[i] = new tuple(width/2,height/2);
   }
@@ -55,7 +62,7 @@ void draw(){
   
   for (int i=1; i<radius.length; i++){
     
-    tuple c = circ(d*i,radius[i-1],centers[i-1]);
+    tuple c = circ(d*speeds[i-1],radius[i-1],centers[i-1]);
     centers[i] = c;
     if (drawBack){
       ellipse(c.x,c.y,radius[i]*2,radius[i]*2);
@@ -130,6 +137,21 @@ void keyPressed() {
     if (key == 'e'){
       radius[2]+=5;
     }
+    
+    //first 3 up the speed
+    //last 3 down the speed
+    if (key == 't'){
+    }
+    if (key == 'y'){
+    }
+    if (key == 'u'){
+    }
+    if (key == 'g'){
+    }
+    if (key == 'h'){
+    }
+    if (key == 'j'){
+    }
     clearList();
   }
 }
@@ -156,7 +178,7 @@ void preCompute(){
     d = count*rate;
     for (int j=1; j<radius.length; j++){
     
-      tuple c0 = circ(d*j,radius[j-1],c[j-1]);
+      tuple c0 = circ(d*speeds[j-1],radius[j-1],c[j-1]);
       c[j] = c0;
     }
   
