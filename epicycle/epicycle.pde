@@ -6,30 +6,53 @@
  -press DOWN to turn it off
  
  -Q/A, W/S, E/D control the radius of the circles
- -speed control not in yet
+ -T/G, Y/H, U/J control the speeds they're going
  
  -press RIGHT to preview the curve
  -press LEFT to get rid of the preview
+ 
+ -press 0-9 to switch "levels"
 
   you can manually adjust initial radius and speed in code.
   search 'MODIFY' and it's those arrays
-  lines 42 and 44
 
 */
+
+//levels!!!!!!!!!!!!!!!!!!!
+//first index is the level, second is radius / speed, third is the value
+//FOR FILLING OUT: first {} on line is radius, second is speed
+float[][][] lvls = new float[][][]{{{50,105,40},{1,-.2,1.8}},
+                               {{45,110,50},{1.5,-3.,1.4}},
+                               {{20,100,50},{1,1.9,-1.9}},
+                               {{50,65,50},{1,-1.1,2.2}},
+                               {{60,60,50},{1,-.2,2.2}},
+                               {{80,30,55},{1,-1.4,-3}},
+                               {{50,30,40},{1,.1,-2.6}},
+                               {{50,105,40},{1,.1,-2.6}},
+                               {{100,50,25},{1,-2.1,-2.1}},
+                               {{100,50,50},{1,1,2.9}}};
+
+//number of circles
 int num = 3;
 
-int[] radius;
-tuple[] centers;
+//modifyable stuffos
+float[] radius;
 float[] speeds;
 
+//these get calculated
+tuple[] centers;
+
+//used for display
 ArrayList<tuple> points;
 ArrayList<tuple> preview;
+int totalPoints = 360*5;
 
-float rate = 0.01;
-int totalPoints = 360*30;
+//for how fast it draws
+float rate = 1;
 
 int counter;
 
+//for UI stuffs
 boolean drawBack = true;
 boolean drawPreview = false;
 
@@ -39,9 +62,9 @@ void setup(){
   stroke(0);
   noFill();
   
-  radius = new int[]{100,50,25}; //MODIFY
+  radius = new float[]{50,105,40}; //MODIFY
   
-  speeds = new float[]{1,-2.1,-2.1}; //MODIFY
+  speeds = new float[]{1,-0.2,1.8}; //MODIFY
   
   centers = new tuple[num];
   for (int i=0; i<centers.length; i++){
@@ -70,7 +93,7 @@ void draw(){
     }
   }
   
-  tuple last = circ(d*radius.length,radius[radius.length-1],centers[centers.length-1]);
+  tuple last = circ(d*speeds[speeds.length-1],radius[radius.length-1],centers[centers.length-1]);
   if (drawBack){
     //first circle
     ellipse(centers[0].x,centers[0].y,radius[0]*2,radius[0]*2);
@@ -98,11 +121,11 @@ void draw(){
 }
 
 //idk why i made all the radius integers oops
-tuple circ(float deg, int rad, tuple center){
+tuple circ(float deg, float rad, tuple center){
   float x;
   float y;
-  x = center.x + rad * cos(deg+PI/2);
-  y = center.y + rad * sin(deg+PI/2);
+  x = center.x + rad * cos(radians(deg) +PI/2);
+  y = center.y + rad * sin(radians(deg) +PI/2);
   return new tuple(x,y);
 }
 
@@ -141,16 +164,29 @@ void keyPressed() {
     //first 3 up the speed
     //last 3 down the speed
     if (key == 't'){
+      speeds[0] += 0.1;
     }
     if (key == 'y'){
+      speeds[1] += 0.1;
     }
     if (key == 'u'){
+      speeds[2] += 0.1;
     }
     if (key == 'g'){
+      speeds[0] -= 0.1;
     }
     if (key == 'h'){
+      speeds[1] -= 0.1;
     }
     if (key == 'j'){
+      speeds[2] -= 0.1;
+    }
+    
+    //for setting level
+    if ((key >= '0') && (key <= '9')){
+      println(int(key)-48);
+      radius = lvls[int(key)-48][0];
+      speeds = lvls[int(key)-48][1];
     }
     clearList();
   }
@@ -182,7 +218,7 @@ void preCompute(){
       c[j] = c0;
     }
   
-    point = circ(d*radius.length,radius[radius.length-1],c[c.length-1]);
+    point = circ(d*speeds[speeds.length-1],radius[radius.length-1],c[c.length-1]);
     preview.add(point);
     count ++;
   }
