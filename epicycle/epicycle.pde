@@ -31,6 +31,11 @@ float[][][] lvls = new float[][][]{{{50,105,40},{1,-.2,1.8}},
                                {{50,105,40},{1,.1,-2.6}},
                                {{100,50,25},{1,-2.1,-2.1}},
                                {{100,50,50},{1,1,2.9}}};
+//multiples of 360. total number of points to plot to show the whole fuckin curve
+//this better be the same length as the lvls array
+int[] pointCount = new int[]{5,10,10,10,5,5,10,10,10,10};
+
+int level = 0;
 
 //number of circles
 int num = 3;
@@ -75,6 +80,8 @@ void setup(){
   preview = new ArrayList<tuple>();
   
   counter=0;
+  
+  //for UI
 }
 
 void draw(){
@@ -117,7 +124,13 @@ void draw(){
     point(points.get(i).x, points.get(i).y);
   }
   
-  
+  fill(0);
+  text("level "+level,20,height-100);
+  text("circle\nradius\nspeed",20,height-60);
+  for (int i=0; i<radius.length;i++){
+    text("0\n"+radius[i]+"\n"+speeds[i],20+50*(i+1),height-60);
+  }
+  noFill();
 }
 
 //idk why i made all the radius integers oops
@@ -184,9 +197,10 @@ void keyPressed() {
     
     //for setting level
     if ((key >= '0') && (key <= '9')){
-      println(int(key)-48);
+      level = int(key)-48;
       radius = lvls[int(key)-48][0];
       speeds = lvls[int(key)-48][1];
+      totalPoints = 360 * pointCount[int(key)-48];
     }
     clearList();
   }
