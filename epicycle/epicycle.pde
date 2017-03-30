@@ -61,9 +61,14 @@ int counter;
 boolean drawBack = true;
 boolean drawPreview = false;
 
+int backgroundColor;
+boolean solved;
+
 void setup(){
   size(900,680);
-  background(255);
+  backgroundColor=225;
+  solved=false;
+  background(backgroundColor);
   stroke(0);
   noFill();
   
@@ -80,12 +85,15 @@ void setup(){
   preview = new ArrayList<tuple>();
   
   counter=0;
-  
-  //for UI
 }
 
 void draw(){
-  background(255);
+  if (solved){
+    backgroundColor = 255;
+  }else{
+    backgroundColor = 225;
+  }
+  background(backgroundColor);
   stroke(200);
   float d=counter*rate;
   counter++;
@@ -115,7 +123,7 @@ void draw(){
   points.add(last);
   
   if (drawPreview){
-    stroke(255,175,175);
+    stroke(255,150,150);
     drawCurve();
   }
   
@@ -128,7 +136,8 @@ void draw(){
   text("level "+level,20,height-100);
   text("circle\nradius\nspeed",20,height-60);
   for (int i=0; i<radius.length;i++){
-    text("0\n"+radius[i]+"\n"+speeds[i],20+50*(i+1),height-60);
+    text("circ "+(i+1)+"\n"+radius[i]+"\n"+speeds[i],20+200*(i+1),height-60);
+    text("goal "+(i+1)+"\n"+lvls[level][0][i]+"\n"+lvls[level][1][i],20+100+200*(i+1),height-60);
   }
   noFill();
 }
@@ -178,29 +187,36 @@ void keyPressed() {
     //last 3 down the speed
     if (key == 't'){
       speeds[0] += 0.1;
+      rounded(speeds[0],1);
     }
     if (key == 'y'){
       speeds[1] += 0.1;
+      rounded(speeds[1],1);
     }
     if (key == 'u'){
       speeds[2] += 0.1;
+      rounded(speeds[2],1);
     }
     if (key == 'g'){
       speeds[0] -= 0.1;
+      rounded(speeds[0],1);
     }
     if (key == 'h'){
       speeds[1] -= 0.1;
+      rounded(speeds[1],1);
     }
     if (key == 'j'){
       speeds[2] -= 0.1;
+      rounded(speeds[2],1);
     }
+    
+    //check if matched the level
+    checkAnswer();
     
     //for setting level
     if ((key >= '0') && (key <= '9')){
-      level = int(key)-48;
-      radius = lvls[int(key)-48][0];
-      speeds = lvls[int(key)-48][1];
-      totalPoints = 360 * pointCount[int(key)-48];
+      changeLevel(int(key)-48);
+      checkAnswer();
     }
     clearList();
   }
@@ -242,6 +258,48 @@ void drawCurve(){
   for (int i=0; i<preview.size(); i++){
     point(preview.get(i).x,preview.get(i).y);
   }
+}
+
+void changeLevel(int l){
+    level = l;
+    //radius = lvls[level][0];
+    //speeds = lvls[level][1];
+    
+    //randomize it to make it gamey
+    for (int i=0; i<radius.length; i++){
+      radius[i] = lvls[level][0][i]+((int)random(10)-5)*5;
+      speeds[i] = lvls[level][1][i]+((int)random(10)-5)*.1;
+    }
+    
+    totalPoints = 360 * pointCount[level];
+}
+
+void checkAnswer(){
+  boolean right = true;
+  for (int i=0; i<radius.length; i++){
+    if (!eq(radius[i],lvls[level][0][i],4)){
+      right = false;
+    }
+    if (!eq(speeds[i],lvls[level][1][i],0.09)){
+      right = false;
+    }
+  }
+  solved = right;
+}
+
+
+//helper stuffos -----------------
+
+boolean eq(float x, float y, float range){
+  if (x < (y+range) && x > (y-range)){
+    return true;
+  }
+    println(x+", "+y+", "+range);
+  return false;
+}
+
+float rounded(float num, int places){
+  return round(num*(places*10))/(places*10);
 }
 
 class tuple{
