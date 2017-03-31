@@ -342,6 +342,7 @@ void drawCurve(){
 
 void drawLine(){
   for (int i=1; i<points.size(); i++){
+    stroke((1-float(i) / float(points.size())) * 255);
     line(points.get(i-1).x,points.get(i-1).y,points.get(i).x,points.get(i).y);
     //point(preview.get(i).x,preview.get(i).y);
   }
