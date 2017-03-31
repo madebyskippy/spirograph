@@ -69,23 +69,23 @@ void loop() {
     Serial.write(val);
 
     //for bend, ones place is a 2
-    val = map(bend,200,1000,0,10);
+    val = map(bend,100,1000,0,10);
     val = val*10+2;
     Serial.write(val);
 
     //photoresistors are radius
     //for photoR 1, ones place is a 3
-    val = map(photoresistors[0],500,900,0,10);
+    val = map(photoresistors[0],600,800,0,10);
     val = val*10+3;
     Serial.write(val);
     
     //for photoR 1, ones place is a 4
-    val = map(photoresistors[1],600,900,0,10);
+    val = map(photoresistors[1],600,800,0,10);
     val = val*10+4;
     Serial.write(val);
     
     //for photoR 1, ones place is a 5
-    val = map(photoresistors[2],200,800,0,10);
+    val = map(photoresistors[2],300,800,0,10);
     val = val*10+5;
     Serial.write(val);
   }

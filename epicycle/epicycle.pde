@@ -64,6 +64,8 @@ int counter;
 boolean drawBack = true;
 boolean drawPreview = false;
 
+boolean capOn = false;
+
 int backgroundColor;
 boolean solved;
 
@@ -112,7 +114,7 @@ void setup(){
   textFont(titleFont);
   
   topMargin = 80;
-  leftMargin = width/8;
+  leftMargin = width/10;
 }
 void drawCircle(float x, float y, float radius) {
   stroke(color(random(100,255), random(100,255),random(100,255)));
@@ -175,7 +177,7 @@ void draw(){
     stroke (10);
     drawLine();
   
-  if (points.size()>totalPoints){
+  if (points.size()>totalPoints/2){
     points.remove(0);
   }
   points.add(last);
@@ -191,8 +193,8 @@ void draw(){
   textFont(headerFont);
   textSize(36);
   text("CYCLE "+level, leftMargin + 80, 50 + topMargin - 20);
- fill(150,150,255);
-   text("ALIGNED", width - leftMargin * 3 + 80, 50 + topMargin - 20);
+  fill(150,150,255);
+  text("ALIGNED", width - leftMargin * 3 + 80, 50 + topMargin - 20);
   fill(0);
   textFont(headerFont);
   textSize(14);
@@ -218,7 +220,6 @@ void draw(){
   noFill();
 }
 
-//idk why i made all the radius integers oops
 tuple circ(float deg, float rad, tuple center){
   float x;
   float y;
@@ -387,8 +388,17 @@ void readInput(int val){
     println("capacitor "+val+" "+val/10);
     if (val/10 == 1){
       //capacitor on
+      if (!capOn){
+        level = (level+1)%10;
+        changeLevel(level);
+        checkAnswer();
+      }
+      capOn = true;
     }if (val/10 == 2){
       //capcaitor off
+      if (capOn){
+      }
+      capOn = false;
     }
   }else if (val%10 == 1){
     println("potentiometer "+val+" "+val/10);
