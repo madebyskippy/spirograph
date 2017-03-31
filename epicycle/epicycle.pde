@@ -104,18 +104,29 @@ void setup(){
   unicode = createFont("Arial Unicode.ttf", 16);
   textFont(titleFont);
   
-  topMargin = 50;
+  topMargin = 80;
   leftMargin = width/8;
+}
+void drawCircle(float x, float y, float radius) {
+  stroke(color(random(100,255), random(100,255),random(100,255)));
+  ellipse(x, y, radius, radius);
+  if(radius > 10) {
+    stroke(color(0, random(100,255),random(100,255)));
+    radius *= 0.75f;
+    drawCircle(x, y, radius);
+  }
 }
 
 void draw(){
   if (solved){
-    backgroundColor = 255;
+    textFont(headerFont);
+    textSize(48);
+    drawCircle(width/2,height/1.75, 1000);
+    text("SELECT NEXT CYCLE", width/2 - textWidth("SELECT NEXT CYCLE")/2, height/1.1);
   }else{
-    backgroundColor = 225;
+     background(225);
   }
-  background(backgroundColor);
-  stroke(200);
+  stroke(100);
   float d=counter*rate;
   counter++;
   
@@ -124,7 +135,12 @@ void draw(){
     tuple c = circ(d*speeds[i-1],radius[i-1],centers[i-1]);
     centers[i] = c;
     if (drawBack){
+      textFont(unicode);
+      textSize(36);
+      text(symbols[i-1], centers[i-1].x,centers[i-1].y);
+      stroke(200);
       ellipse(c.x,c.y,radius[i]*2,radius[i]*2);
+      stroke(100);
       line(centers[i-1].x,centers[i-1].y,centers[i].x,centers[i].y);
     }
   }
@@ -132,21 +148,26 @@ void draw(){
   tuple last = circ(d*speeds[speeds.length-1],radius[radius.length-1],centers[centers.length-1]);
   if (drawBack){
     //first circle
+    stroke(200);
     ellipse(centers[0].x,centers[0].y,radius[0]*2,radius[0]*2);
-    
+    text(symbols[2], centers[centers.length-1].x,centers[centers.length-1].y);
     //and last line
+    stroke(100);
     line (centers[centers.length-1].x,centers[centers.length-1].y, last.x, last.y);
   }
+  
+    stroke(200,200,255);
+    drawCurve();
+    
+    stroke (10);
+    drawLine();
   
   if (points.size()>totalPoints){
     points.remove(0);
   }
   points.add(last);
   
-  if (drawPreview){
-    stroke(255,150,150);
-    drawCurve();
-  }
+
   
   stroke(0);
   for (int i=0; i<points.size(); i++){
@@ -158,7 +179,7 @@ void draw(){
   textSize(36);
   text("CYCLE "+level, leftMargin + 80, 50 + topMargin - 20);
  fill(150,150,255);
-   text("IDEAL", width - leftMargin * 3 + 80, 50 + topMargin - 20);
+   text("ALIGNED", width - leftMargin * 3 + 80, 50 + topMargin - 20);
   fill(0);
   textFont(headerFont);
   textSize(14);
@@ -271,8 +292,11 @@ void clearList(){
   }
 }
 
+//shows it for the LEVEL not the current thing
 void preCompute(){
   int size = preview.size();
+  float[] r = lvls[level][0];
+  float[] s = lvls[level][1];
   for (int i=0; i<size; i++){
     preview.remove(0);
   }
@@ -286,11 +310,11 @@ void preCompute(){
     d = count*rate;
     for (int j=1; j<radius.length; j++){
     
-      tuple c0 = circ(d*speeds[j-1],radius[j-1],c[j-1]);
+      tuple c0 = circ(d*s[j-1],r[j-1],c[j-1]);
       c[j] = c0;
     }
   
-    point = circ(d*speeds[speeds.length-1],radius[radius.length-1],c[c.length-1]);
+    point = circ(d*s[s.length-1],r[r.length-1],c[c.length-1]);
     preview.add(point);
     count ++;
   }
@@ -299,6 +323,13 @@ void preCompute(){
 void drawCurve(){
   for (int i=1; i<preview.size(); i++){
     line(preview.get(i-1).x,preview.get(i-1).y,preview.get(i).x,preview.get(i).y);
+    //point(preview.get(i).x,preview.get(i).y);
+  }
+}
+
+void drawLine(){
+  for (int i=1; i<points.size(); i++){
+    line(points.get(i-1).x,points.get(i-1).y,points.get(i).x,points.get(i).y);
     //point(preview.get(i).x,preview.get(i).y);
   }
 }
@@ -314,7 +345,9 @@ void changeLevel(int l){
       speeds[i] = lvls[level][1][i]+((int)random(10)-5)*.1;
     }
     
+    preCompute();
     totalPoints = 360 * pointCount[level];
+    
 }
 
 void checkAnswer(){
