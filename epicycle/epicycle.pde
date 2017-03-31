@@ -53,7 +53,7 @@ ArrayList<tuple> preview;
 int totalPoints = 360*5;
 
 //for how fast it draws
-float rate = 1;
+float rate = 3;
 
 int counter;
 
@@ -64,8 +64,19 @@ boolean drawPreview = false;
 int backgroundColor;
 boolean solved;
 
+String[] symbols = new String[]{"☼","☽","☄"};
+
+PFont titleFont;
+PFont headerFont;
+PFont bodyFont;
+PFont italicFont;
+PFont unicode;
+
+float topMargin;
+float leftMargin;
+
 void setup(){
-  size(900,680);
+  size(1280,720);
   backgroundColor=225;
   solved=false;
   background(backgroundColor);
@@ -78,13 +89,23 @@ void setup(){
   
   centers = new tuple[num];
   for (int i=0; i<centers.length; i++){
-    centers[i] = new tuple(width/2,height/2);
+    centers[i] = new tuple(width/2,height/1.75);
   }
   
   points = new ArrayList<tuple>();
   preview = new ArrayList<tuple>();
   
   counter=0;
+  
+  italicFont = createFont("ACaslonPro-Italic.otf", 16);
+  bodyFont = createFont("AGaramondPro-Regular.otf", 16);
+  titleFont = createFont("RobotoMono-Bold.ttf", 16);
+  headerFont = createFont("RobotoMono-Light.ttf", 16);
+  unicode = createFont("Arial Unicode.ttf", 16);
+  textFont(titleFont);
+  
+  topMargin = 50;
+  leftMargin = width/8;
 }
 
 void draw(){
@@ -133,11 +154,32 @@ void draw(){
   }
   
   fill(0);
-  text("level "+level,20,height-100);
-  text("circle\nradius\nspeed",20,height-60);
+  textFont(headerFont);
+  textSize(36);
+  text("CYCLE "+level, leftMargin + 80, 50 + topMargin - 20);
+ fill(150,150,255);
+   text("IDEAL", width - leftMargin * 3 + 80, 50 + topMargin - 20);
+  fill(0);
+  textFont(headerFont);
+  textSize(14);
+  text("MASS\nLIGHT",leftMargin,150 + topMargin);
+  
   for (int i=0; i<radius.length;i++){
-    text("circ "+(i+1)+"\n"+radius[i]+"\n"+speeds[i],20+200*(i+1),height-60);
-    text("goal "+(i+1)+"\n"+lvls[level][0][i]+"\n"+lvls[level][1][i],20+100+200*(i+1),height-60);
+    fill(0);
+    textFont(italicFont);
+    textSize(14);
+    text("O " + (i+1), leftMargin + (80*(i+1)),100 + topMargin);
+    line (leftMargin + (80*(i+1)), 100 + topMargin + 5, leftMargin + (80*(i+1)) + textWidth("O " + (i+1)), 100 + topMargin + 5);
+    textFont(bodyFont);
+    text(nf(radius[i], 1,0)+"\n"+nf(speeds[i], 1,1),leftMargin+(80*(i+1)),150 + topMargin);
+   
+    fill(150,150,255);
+   
+    textFont(unicode);
+    textSize(48);
+    text(symbols[i], width - leftMargin * 3 + (80*(i+1)), 100 + topMargin);
+     textFont(bodyFont);
+    text(nf(lvls[level][0][i], 1,0)+"\n"+ nf(lvls[level][1][i],1,1) ,width - leftMargin * 3 + (80*(i+1)),150 + topMargin);
   }
   noFill();
 }
@@ -255,8 +297,9 @@ void preCompute(){
 }
 
 void drawCurve(){
-  for (int i=0; i<preview.size(); i++){
-    point(preview.get(i).x,preview.get(i).y);
+  for (int i=1; i<preview.size(); i++){
+    line(preview.get(i-1).x,preview.get(i-1).y,preview.get(i).x,preview.get(i).y);
+    //point(preview.get(i).x,preview.get(i).y);
   }
 }
 
