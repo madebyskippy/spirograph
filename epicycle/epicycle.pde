@@ -17,6 +17,9 @@
   search 'MODIFY' and it's those arrays
 
 */
+import processing.serial.*;
+Serial myPort;  // Create object from Serial class
+int val;
 
 //levels!!!!!!!!!!!!!!!!!!!
 //first index is the level, second is radius / speed, third is the value
@@ -76,6 +79,10 @@ float topMargin;
 float leftMargin;
 
 void setup(){
+  
+  String portName = Serial.list()[2];
+  myPort = new Serial(this, portName, 9600);
+  
   size(1280,720);
   backgroundColor=225;
   solved=false;
@@ -109,6 +116,12 @@ void setup(){
 }
 
 void draw(){
+  if ( myPort.available() > 0) {  // If data is available,
+    val = myPort.read();         // read it and store it in val
+    //println(val);
+    readInput(val);
+  }
+   
   if (solved){
     backgroundColor = 255;
   }else{
@@ -311,7 +324,11 @@ void changeLevel(int l){
     //randomize it to make it gamey
     for (int i=0; i<radius.length; i++){
       radius[i] = lvls[level][0][i]+((int)random(10)-5)*5;
-      speeds[i] = lvls[level][1][i]+((int)random(10)-5)*.1;
+      if (i != 2){
+        speeds[i] = lvls[level][1][i]+((int)random(10)-5)*.1;
+      }else{
+        speeds[i] = lvls[level][1][i];
+      }
     }
     
     totalPoints = 360 * pointCount[level];
@@ -330,6 +347,37 @@ void checkAnswer(){
   solved = right;
 }
 
+void readInput(int val){
+  //println(val);
+  if (val%10 == 0){
+    println("capacitor "+val+" "+val/10);
+    if (val/10 == 1){
+      //capacitor on
+    }if (val/10 == 2){
+      //capcaitor off
+    }
+  }else if (val%10 == 1){
+    println("potentiometer "+val+" "+val/10);
+    //speed of middle circle
+    speeds[1] = lvls[level][1][1] + (val/10 - 5)*0.1;
+  }else if (val%10 == 2){
+    println("bend "+val+" "+val/10);
+    //speed of biggest circle
+    speeds[0] = lvls[level][1][0] + (val/10 - 5)*0.1;
+  }else if (val%10 == 3){
+    println("photor1 "+val+" "+val/10);
+    //radius of biggest
+    radius[0] = lvls[level][0][0] + (val/10 - 5)*5;
+  }else if (val%10 == 4){
+    println("photor2 "+val+" "+val/10);
+    //radius of middle
+    radius[1] = lvls[level][0][1] + (val/10 - 5)*5;
+  }else if (val%10 == 5){
+    println("photor3 "+val+" "+val/10);
+    //radius of small
+    radius[2] = lvls[level][0][2] + (val/10 - 5)*5;
+  }
+}
 
 //helper stuffos -----------------
 
@@ -337,7 +385,7 @@ boolean eq(float x, float y, float range){
   if (x < (y+range) && x > (y-range)){
     return true;
   }
-    println(x+", "+y+", "+range);
+    //println(x+", "+y+", "+range);
   return false;
 }
 
